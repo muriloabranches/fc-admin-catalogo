@@ -1,12 +1,13 @@
 package dev.muriloabranches.admin.catalogo.domain.category;
 
 import dev.muriloabranches.admin.catalogo.domain.AggregateRoot;
+import dev.muriloabranches.admin.catalogo.domain.utils.InstantUtils;
 import dev.muriloabranches.admin.catalogo.domain.validation.ValidationHandler;
 
 import java.time.Instant;
 import java.util.Objects;
 
-public class Category extends AggregateRoot<CategoryID> {
+public class Category extends AggregateRoot<CategoryID> implements Cloneable {
 
     private String name;
     private String description;
@@ -30,10 +31,23 @@ public class Category extends AggregateRoot<CategoryID> {
 
     public static Category newCategory(final String aName, final String aDescription, final boolean isActive) {
         final var id = CategoryID.unique();
-        final var now = Instant.now();
+        final var now = InstantUtils.now();
         final var deletedAt = isActive ? null : now;
 
         return new Category(id, aName, aDescription, isActive, now, now, deletedAt);
+    }
+
+    public static Category with(final CategoryID anId, final String name, final String description,
+                                final boolean active, final Instant createdAt, final Instant updatedAt,
+                                final Instant deletedAt
+    ) {
+        return new Category(anId, name, description, active, createdAt, updatedAt, deletedAt);
+    }
+
+    public static Category with(final Category aCategory) {
+        return with(aCategory.getId(), aCategory.name, aCategory.description, aCategory.isActive(),
+                aCategory.createdAt, aCategory.updatedAt, aCategory.deletedAt
+        );
     }
 
     @Override
@@ -44,21 +58,25 @@ public class Category extends AggregateRoot<CategoryID> {
     public Category activate() {
         this.deletedAt = null;
         this.active = true;
-        this.updatedAt = Instant.now();
+        this.updatedAt = InstantUtils.now();
         return this;
     }
 
     public Category deactivate() {
         if (getDeletedAt() == null) {
-            this.deletedAt = Instant.now();
+            this.deletedAt = InstantUtils.now();
         }
 
         this.active = false;
-        this.updatedAt = Instant.now();
+        this.updatedAt = InstantUtils.now();
         return this;
     }
 
-    public Category update(final String aName, final String aDescription, final boolean isActive) {
+    public Category update(
+            final String aName,
+            final String aDescription,
+            final boolean isActive
+    ) {
         if (isActive) {
             activate();
         } else {
@@ -96,5 +114,14 @@ public class Category extends AggregateRoot<CategoryID> {
 
     public Instant getDeletedAt() {
         return deletedAt;
+    }
+
+    @Override
+    public Category clone() {
+        try {
+            return (Category) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }
