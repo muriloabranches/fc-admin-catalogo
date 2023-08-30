@@ -16,9 +16,14 @@ public class Category extends AggregateRoot<CategoryID> implements Cloneable {
     private Instant updatedAt;
     private Instant deletedAt;
 
-    private Category(final CategoryID anId, final String aName, final String aDescription,
-                     final boolean isActive, final Instant aCreationDate, final Instant aUpdateDate,
-                     final Instant aDeleteDate
+    private Category(
+            final CategoryID anId,
+            final String aName,
+            final String aDescription,
+            final boolean isActive,
+            final Instant aCreationDate,
+            final Instant aUpdateDate,
+            final Instant aDeleteDate
     ) {
         super(anId);
         this.name = aName;
@@ -37,9 +42,14 @@ public class Category extends AggregateRoot<CategoryID> implements Cloneable {
         return new Category(id, aName, aDescription, isActive, now, now, deletedAt);
     }
 
-    public static Category with(final CategoryID anId, final String name, final String description,
-                                final boolean active, final Instant createdAt, final Instant updatedAt,
-                                final Instant deletedAt
+    public static Category with(
+            final CategoryID anId,
+            final String name,
+            final String description,
+            final boolean active,
+            final Instant createdAt,
+            final Instant updatedAt,
+            final Instant deletedAt
     ) {
         return new Category(anId, name, description, active, createdAt, updatedAt, deletedAt);
     }
